@@ -1,0 +1,62 @@
+# OS junk
+# ... existing code ...
+.DS_Store
+Thumbs.db
+
+# Logs
+# ... existing code ...
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Env files (never commit secrets)
+# ... existing code ...
+.env
+.env.*
+**/.env
+**/.env.*
+
+# Node
+# ... existing code ...
+node_modules/
+**/node_modules/
+
+# Build outputs
+# ... existing code ...
+/dist/
+**/dist/
+build/
+**/build/
+
+# Tooling caches
+# ... existing code ...
+.vscode/
+.eslintcache
+.parcel-cache/
+.next/
+.vercel/
+.svelte-kit/
+
+# Frontend specific
+# ... existing code ...
+travelAdvisor/public/*.mp4
+travelAdvisor/.cache/
+travelAdvisor/.vite/
+
+# Backend specific
+# ... existing code ...
+TravelBackend/uploads/
+coverage/
+
+# Misc
+# ... existing code ...
+*.tmp
+*.swp
+*.swo
+.idea/
+
+# Markdown docs (ignore if not needed) but keep README.md files
+**/*.md
+!**/README.md
