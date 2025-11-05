@@ -18,9 +18,9 @@ const withRapidApiKey = (headers = {}) => {
   const travelKey = import.meta.env.VITE_RAPID_API_TRAVEL_API_KEY
   const weatherKey = import.meta.env.VITE_RAPID_API_WEATHER_API_KEY
 
-  console.log('🔑 API Keys check:')
-  console.log('🔑 Travel API Key:', travelKey ? 'Present' : 'Missing')
-  console.log('🔑 Weather API Key:', weatherKey ? 'Present' : 'Missing')
+  console.log(' API Keys check:')
+  console.log(' Travel API Key:', travelKey ? 'Present' : 'Missing')
+  console.log(' Weather API Key:', weatherKey ? 'Present' : 'Missing')
 
   return {
     travelHeaders: {
@@ -37,25 +37,25 @@ const withRapidApiKey = (headers = {}) => {
 }
 
 export const getPlacesData = async (type, sw, ne) => {
-  console.log('🌐 API: Fetching places data...')
-  console.log('🌐 API: Type:', type)
-  console.log('🌐 API: SW bounds:', sw)
-  console.log('🌐 API: NE bounds:', ne)
+  console.log(' API: Fetching places data...')
+  console.log(' API: Type:', type)
+  console.log(' API: SW bounds:', sw)
+  console.log(' API: NE bounds:', ne)
   
   try {
     const { travelHeaders } = withRapidApiKey()
     const apiKey = travelHeaders['x-rapidapi-key']
-    console.log('🌐 API: API Key present:', !!apiKey)
-    console.log('🌐 API: API Key length:', apiKey?.length || 0)
-    console.log('🌐 API: API Key preview:', apiKey ? `${apiKey.substring(0, 10)}...` : 'Missing')
+    console.log(' API: API Key present:', !!apiKey)
+    console.log(' API: API Key length:', apiKey?.length || 0)
+    console.log(' API: API Key preview:', apiKey ? `${apiKey.substring(0, 10)}...` : 'Missing')
     
     if (!apiKey) {
-      console.error('❌ Missing RapidAPI Travel Advisor key (VITE_RAPID_API_TRAVEL_API_KEY).')
-      console.error('❌ Please check your .env file and restart the dev server.')
+      console.error(' Missing RapidAPI Travel Advisor key (VITE_RAPID_API_TRAVEL_API_KEY).')
+      console.error(' Please check your .env file and restart the dev server.')
       return []
     }
     
-    console.log('🌐 API: Request headers:', {
+    console.log(' API: Request headers:', {
       'x-rapidapi-host': travelHeaders['x-rapidapi-host'],
       'x-rapidapi-key': apiKey ? `${apiKey.substring(0, 10)}...` : 'Missing'
     })
@@ -79,35 +79,35 @@ export const getPlacesData = async (type, sw, ne) => {
         : {}),
     }
     
-    console.log('🌐 API: Request params:', params)
-    console.log('🌐 API: Request URL:', `/${type}/list-in-boundary`)
+    console.log(' API: Request params:', params)
+    console.log(' API: Request URL:', `/${type}/list-in-boundary`)
 
     const response = await travelAdvisorClient.get(`/${type}/list-in-boundary`, {
       params,
       headers: travelHeaders,
     })
 
-    console.log('🌐 API: Response status:', response.status)
-    console.log('🌐 API: Response data keys:', Object.keys(response.data || {}))
-    console.log('🌐 API: Places count:', response.data?.data?.length || 0)
+    console.log(' API: Response status:', response.status)
+    console.log(' API: Response data keys:', Object.keys(response.data || {}))
+    console.log(' API: Places count:', response.data?.data?.length || 0)
     
     const places = response.data?.data ?? []
-    console.log('🌐 API: Returning', places.length, 'places')
+    console.log(' API: Returning', places.length, 'places')
     
     return places
   } catch (error) {
     const status = error.response?.status
     const errorData = error.response?.data
     
-    console.error('❌ API: Unable to fetch places data')
-    console.error('❌ API: Error message:', error.message)
-    console.error('❌ API: Error response:', errorData)
-    console.error('❌ API: Error status:', status)
+    console.error(' API: Unable to fetch places data')
+    console.error(' API: Error message:', error.message)
+    console.error(' API: Error response:', errorData)
+    console.error(' API: Error status:', status)
     
     // Handle rate limiting (429 Too Many Requests)
     if (status === 429) {
-      console.warn('⚠️ Rate limit exceeded. Please wait before making more requests.')
-      console.warn('⚠️ You may need to upgrade your RapidAPI subscription or wait for quota reset.')
+      console.warn(' Rate limit exceeded. Please wait before making more requests.')
+      console.warn(' You may need to upgrade your RapidAPI subscription or wait for quota reset.')
       
       // Return empty array to prevent UI errors, but log the issue clearly
       return []
@@ -115,10 +115,10 @@ export const getPlacesData = async (type, sw, ne) => {
     
     // Handle other errors
     if (status === 403) {
-      console.error('❌ Forbidden: Check your API key and subscription status')
+      console.error(' Forbidden: Check your API key and subscription status')
     }
     
-    console.error('❌ API: Full error:', error)
+    console.error(' API: Full error:', error)
     return []
   }
 }

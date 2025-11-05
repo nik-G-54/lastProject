@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import axiosInstance from "../utils/axiosInstance"
 import { validateEmail } from "../utils/helper"
 import { useDispatch, useSelector } from "react-redux"
+// import Navbar from "../Scomponent/Navbar"
 
 const SignUp = () => {
   const navigate = useNavigate()
@@ -69,6 +70,7 @@ const SignUp = () => {
 
   return (
     <div className="h-screen bg-cyan-50 overflow-hidden relative">
+      {/* <Navbar /> */}
       <div className="login-ui-box right-10 -top-40" />
 
       <div className="container h-screen flex items-center justify-center px-20 mx-auto">

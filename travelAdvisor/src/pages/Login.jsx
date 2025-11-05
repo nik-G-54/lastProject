@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import axiosInstance from "../utils/axiosInstance"
 import { validateEmail } from "../utils/helper"
 import { useDispatch, useSelector } from "react-redux"
+// import Navbar from "../Scomponent/Navbar"
 import {
   signInFailure,
   signInStart,
@@ -46,7 +47,7 @@ const Login = () => {
 
       if (response.data) {
         dispatch(signInSuccess(response.data))
-        navigate("/home")
+        navigate("/home")   ///.................................... yha se change krna h navigation 
       } else {
         dispatch(signInFailure("An unexpected error occurred!"))
       }
@@ -73,6 +74,7 @@ const Login = () => {
 
   return (
     <div className="h-screen bg-cyan-50 overflow-hidden relative">
+      {/* <Navbar /> */}
       <div className="login-ui-box right-10 -top-40" />
 
       <div className="container h-screen flex items-center justify-center px-20 mx-auto">
@@ -90,7 +92,7 @@ const Login = () => {
 
         <div className="w-2/4 h-[75vh] bg-white rounded-r-lg relative p-16 shadow-lg shadow-cyan-200/20">
           <form onSubmit={handleSubmit}>
-            <h4 className="text-2xl font-semibold mb-7">Login</h4>
+            <h4 className="text-2xl font-semibold mb-7">Login <i class="fa-solid fa-right-to-bracket"></i></h4>
 
             <input
               type="email"

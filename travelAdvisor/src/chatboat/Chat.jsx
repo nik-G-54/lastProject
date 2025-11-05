@@ -6,6 +6,7 @@ import ChatContainer from '../chatboat/Chatcomponent/ChatContainer'
 import ChatInput from '../chatboat/Chatcomponent/ChatInput'
 import { useGeminiAPI } from './useGeminiAPI'
 import GeminiLogo from '../assets/Gemini.png'
+import Navbar from '../Scomponent/Navbar'
 
 function Chat() {
   const [input, setInput] = useState("");
@@ -56,6 +57,7 @@ function Chat() {
 
   return (
     <div className='bigContainer h-screen bg-zinc-900 p-2 sm:p-4 flex flex-col overflow-none'>
+      <Navbar />
       <Navigation />
       <ChatContainer conversation={conversation} isLoading={isLoading} />
       <ChatInput 

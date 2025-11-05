@@ -34,10 +34,10 @@ const Home = () => {
     data: null,
   })
 
-  // Get all travel stories
+  // Get only logged-in user's travel stories
   const getAllTravelStories = async () => {
     try {
-      const response = await axiosInstance.get("/travel-story/get-all")
+      const response = await axiosInstance.get("/travel-story/my-stories")
 
       if (response.data && response.data.stories) {
         setAllStories(response.data.stories)
@@ -196,7 +196,7 @@ const Home = () => {
         handleClearSearch={handleClearSearch}
       />
 
-      <div className="container mx-auto py-10">
+      <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
         <FilterInfoTitle
           filterType={filterType}
           filterDate={dateRange}
@@ -206,10 +206,10 @@ const Home = () => {
           }}
         />
 
-        <div className="flex gap-7">
+        <div className="flex flex-col-reverse lg:flex-row gap-7">
           <div className="flex-1">
             {allStories.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {allStories.map((item) => {
                   return (
                     <TravelStoryCard
@@ -229,9 +229,7 @@ const Home = () => {
               </div>
             ) : (
               <EmptyCard
-                imgSrc={
-                  "https://images.pexels.com/photos/5706021/pexels-photo-5706021.jpeg?auto=compress&cs=tinysrgb&w=600"
-                }
+               imgSrc="/blankbox.jpg"
                 message={getEmptyCardMessage(filterType)}
                 setOpenAddEditModal={() =>
                   setOpenAddEditModal({
@@ -244,7 +242,7 @@ const Home = () => {
             )}
           </div>
 
-          <div className="w-[320px]">
+          <div className="w-full lg:w-[320px]">
             <div className="bg-white border border-slate-200 shadow-lg shadow-slate-200/60 rounded-lg">
               <div className="p-3">
                 <DayPicker

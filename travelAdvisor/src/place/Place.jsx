@@ -5,6 +5,7 @@ import Header from '../components/Header'
 import List from '../components/List'
 import Map from '../components/Map'
 import { getPlacesData, getWeatherData } from '../api/travelAdvisor'
+import Navbar from '../Scomponent/Navbar'
 
 const libraries = ['places']
 
@@ -251,13 +252,36 @@ const Place = () => {
     [displayPlaces],
   )
 
+  const handleManualSearch = async (query) => {
+    try {
+      if (!query) return
+      if (!window.google?.maps?.Geocoder) return
+      const geocoder = new window.google.maps.Geocoder()
+      geocoder.geocode({ address: query }, (results, status) => {
+        if (status === 'OK' && results && results[0]) {
+          const loc = results[0].geometry.location
+          const newCoords = { lat: loc.lat(), lng: loc.lng() }
+          setCoords(newCoords)
+          setSelectedPlaceId(null)
+          prevBoundsRef.current = null
+        } else {
+          console.warn('Geocoding failed:', status)
+        }
+      })
+    } catch (error) {
+      console.error('❌ Manual search error:', error)
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900">
+      <Navbar />
       <Header
         isLoaded={isLoaded}
         hasError={Boolean(loadError) || !hasGoogleApiKey}
         onLoad={handleAutocompleteLoad}
         onPlaceChanged={handlePlaceChanged}
+        onManualSearch={handleManualSearch}
       />
 
       <main className="mx-auto w-full max-w-7xl px-4 pb-10 pt-6 lg:px-8">

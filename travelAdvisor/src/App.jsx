@@ -32,6 +32,7 @@ import PrivateRoute from "./Scomponent/PrivateRoute"
 import Place from './place/Place'
 import Chat from './chatboat/Chat'
 import Groupchat from "./groupchat/Groupchat"
+import AllStory from "./Home/AllStory"
 const App = () => {
   return (
     <>
@@ -42,7 +43,8 @@ const App = () => {
           
           {/* Authenticated Routes */}
           <Route element={<PrivateRoute />}>
-            <Route path="/home" exact element={<Home />} />
+            <Route path="/home" exact element={<Home  />} />
+            <Route path="/all-stories" exact element={<AllStory />} />
           </Route>
 
           {/* Public Routes */}

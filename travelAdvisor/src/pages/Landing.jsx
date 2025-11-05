@@ -10,9 +10,10 @@ const Landing = () => {
         loop
         muted
         playsInline
-        className="absolute top-0 left-0 w-full h-full object-cover z-0 pointer-events-none"
+        
+        className="absolute top-0 left-0 w-full h-full  object-cover z-0 pointer-events-none"
       >
-        <source src="/3094026-uhd_3840_2160_30fps.mp4" type="video/mp4" />
+        <source src="/O.mp4" type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
@@ -35,7 +36,8 @@ const Landing = () => {
           className="px-6 py-2 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-full border border-white/30 hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer"
           aria-label="Go to Login"
         >
-          Login
+          Login <t></t>
+          <i class="fa-solid fa-right-to-bracket"></i>
         </Link>
       </nav>
 

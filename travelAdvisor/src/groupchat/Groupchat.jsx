@@ -1,6 +1,8 @@
 import React from 'react'
 import { useEffect, useRef, useState } from 'react';
 import { connectWS } from './ws';
+import uploadImage from '../utils/uploadImage';
+import Navbar from "../Scomponent/Navbar"
 const Groupchat = () => {
 
 
@@ -8,6 +10,7 @@ const Groupchat = () => {
 
      const timer = useRef(null);
     const socket = useRef(null);
+    const bottomRef = useRef(null);
     const [userName, setUserName] = useState('');
     const [showNamePopup, setShowNamePopup] = useState(true);
     const [inputName, setInputName] = useState('');
@@ -20,6 +23,9 @@ const Groupchat = () => {
         socket.current = connectWS();
 
         socket.current.on('connect', () => {
+            // request persisted history when connected
+            socket.current.emit('requestHistory');
+
             socket.current.on('roomNotice', (userName) => {
                 console.log(`${userName} joined to group!`);
             });
@@ -28,6 +34,28 @@ const Groupchat = () => {
                 // push to existing messages list
                 console.log('msg', msg);
                 setMessages((prev) => [...prev, msg]);
+            });
+
+            socket.current.on('history', (items) => {
+                // normalize to expected client shape
+                const normalized = items.map((it) => ({
+                    id: it._id || it.id || Date.now() + Math.random(),
+                    sender: it.sender,
+                    text: it.text || '',
+                    imageUrl: it.imageUrl || '',
+                    ts: it.createdAt ? new Date(it.createdAt).getTime() : it.ts || Date.now(),
+                }));
+                setMessages(normalized);
+            });
+
+            socket.current.on('chatAck', (msg) => {
+                // replace optimistic message with saved one (by id if we ever map)
+                setMessages((prev) => [...prev, msg]);
+            });
+
+            // when a message is deleted elsewhere, remove it locally
+            socket.current.on('messageDeleted', ({ id }) => {
+                setMessages((prev) => prev.filter((m) => m.id !== id));
             });
 
             socket.current.on('typing', (userName) => {
@@ -51,6 +79,9 @@ const Groupchat = () => {
             socket.current.off('chatMessage');
             socket.current.off('typing');
             socket.current.off('stopTyping');
+            socket.current.off('history');
+            socket.current.off('chatAck');
+            socket.current.off('messageDeleted');
         };
     }, []);
 
@@ -68,6 +99,13 @@ const Groupchat = () => {
             clearTimeout(timer.current);
         };
     }, [text, userName]);
+
+    // AUTO SCROLL TO LATEST MESSAGE WHENEVER MESSAGES UPDATE
+    useEffect(() => {
+        if (bottomRef.current) {
+            bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]);
 
     // FORMAT TIMESTAMP TO HH:MM FOR MESSAGES
     function formatTime(ts) {
@@ -104,10 +142,28 @@ const Groupchat = () => {
         };
         setMessages((m) => [...m, msg]);
 
-        // emit
+        // emit to persist/broadcast
         socket.current.emit('chatMessage', msg);
 
         setText('');
+    }
+
+    async function sendImage(file) {
+        if (!file || !userName) return;
+        try {
+            const { imageUrl } = await uploadImage(file);
+            const msg = {
+                id: Date.now(),
+                sender: userName,
+                text: '',
+                imageUrl,
+                ts: Date.now(),
+            };
+            setMessages((m) => [...m, msg]);
+            socket.current.emit('chatMessage', msg);
+        } catch (e) {
+            console.error('Image upload failed', e);
+        }
     }
 
     // HANDLE ENTER KEY TO SEND MESSAGE
@@ -117,8 +173,20 @@ const Groupchat = () => {
             sendMessage();
         }
     }
+
+    // DELETE MESSAGE (only local author gets button)
+    function deleteMessage(id) {
+        setMessages((prev) => prev.filter((m) => m.id !== id));
+        try {
+            socket.current.emit('deleteMessage', { id });
+        } catch (e) {
+            // ignore if ws not connected; local delete already applied
+            console.log(e)
+        }
+    }
   return (
     <div>
+       <Navbar />
        <div className="min-h-screen flex items-center justify-center bg-zinc-100 p-4 font-inter">
             {/* ENTER YOUR NAME TO START CHATTING */}
             {showNamePopup && (
@@ -189,24 +257,50 @@ const Groupchat = () => {
                                                 ? 'bg-[#DCF8C6] text-[#303030] rounded-br-2xl'
                                                 : 'bg-white text-[#303030] rounded-bl-2xl'
                                         }`}>
-                                        <div className="break-words whitespace-pre-wrap">
-                                            {m.text}
-                                        </div>
+                                        {m.imageUrl ? (
+                                            <img src={m.imageUrl} alt="shared" className="rounded-md mb-2 max-h-64 object-contain" />
+                                        ) : null}
+                                        {m.text ? (
+                                            <div className="break-words whitespace-pre-wrap">{m.text}</div>
+                                        ) : null}
                                         <div className="flex justify-between items-center mt-1 gap-16">
                                             <div className="text-[11px] font-bold">{m.sender}</div>
                                             <div className="text-[11px] text-gray-500 text-right">
                                                 {formatTime(m.ts)}
                                             </div>
                                         </div>
+                                        {mine ? (
+                                            <div className="flex justify-end mt-1">
+                                                <button
+                                                    onClick={() => deleteMessage(m.id)}
+                                                    className="text-[11px] text-red-600 hover:underline">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        ) : null}
                                     </div>
                                 </div>
                             );
                         })}
+                        <div ref={bottomRef} />
                     </div>
 
                     {/* CHAT TEXTAREA */}
                     <div className="px-4 py-3 border-t border-gray-200 bg-white">
                         <div className="flex items-center justify-between gap-4 border border-gray-200 rounded-full">
+                            <label className="px-3 cursor-pointer" title="Send image">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files && e.target.files[0];
+                                        if (file) sendImage(file);
+                                        e.target.value = '';
+                                    }}
+                                />
+                                <span className="text-green-600 font-medium">📎</span>
+                            </label>
                             <textarea
                                 rows={1}
                                 value={text}
