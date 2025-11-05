@@ -7,6 +7,7 @@ import {
   editTravelStory,
   filterTravelStories,
   getAllTravelStory,
+  getMyTravelStories,
   imageUpload,
   searchTravelStory,
   updateIsFavourite,
@@ -22,6 +23,8 @@ router.delete("/delete-image", deleteImage)
 router.post("/add", verifyToken, addTravelStory)
 
 router.get("/get-all", verifyToken, getAllTravelStory)
+
+router.get("/my-stories", verifyToken, getMyTravelStories)
 
 router.post("/edit-story/:id", verifyToken, editTravelStory)
 

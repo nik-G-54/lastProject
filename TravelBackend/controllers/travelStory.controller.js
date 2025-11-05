@@ -39,10 +39,26 @@ export const addTravelStory = async (req, res, next) => {
 export const getAllTravelStory = async (req, res, next) => {
   const userId = req.user.id
 
+
   try {
-    const travelStories = await TravelStory.find({ userId: userId }).sort({
-      isFavorite: -1,
-    })
+    
+    const travelStories = await TravelStory.find()
+      .sort({ isFavorite: -1, createdAt: -1 }) // Favourites first, then newest
+      
+    res.status(200).json({ stories: travelStories })
+  } catch (error) {
+    next(error)
+  }
+
+
+}
+
+export const getMyTravelStories = async (req, res, next) => {
+  const userId = req.user.id
+
+  try {
+    const travelStories = await TravelStory.find({ userId })
+      .sort({ isFavorite: -1, createdAt: -1 })
 
     res.status(200).json({ stories: travelStories })
   } catch (error) {
@@ -110,7 +126,8 @@ export const editTravelStory = async (req, res, next) => {
 
     // Store old image URL before updating
     const oldImageUrl = travelStory.imageUrl
-    const placeholderImageUrl = `http://localhost:3000/assets/placeholderImage.png`
+    const placeholderImageUrl = "/assets/placeholderImage.png";
+
 
     // Update travel story fields
     travelStory.title = title
@@ -216,7 +233,7 @@ export const searchTravelStory = async (req, res, next) => {
     const searchResults = await TravelStory.find({
       userId: userId,
       $or: [
-        { title: { $regex: query, $options: "i" } },
+        { title: { $regex: query, $options: "i" } },   // this i make the search case insencitive 
         { story: { $regex: query, $options: "i" } },
         // Search in visitedLocation array - matches any location in the array
         { visitedLocation: { $regex: query, $options: "i" } },

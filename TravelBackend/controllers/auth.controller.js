@@ -64,6 +64,8 @@ export const signup = async (req, res, next) => {
   }
 }
 
+//.......................signin..........................................................................................
+
 export const signin = async (req, res, next) => {
   const { email, password } = req.body
 
@@ -91,12 +93,15 @@ export const signin = async (req, res, next) => {
 
     const { password: pass, ...rest } = validUser._doc
 
+    const isProd = process.env.NODE_ENV === 'production'
+
     res
       .status(200)
       .cookie("access_token", token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: isProd, // required by browsers for SameSite=None
+        sameSite: isProd ? 'none' : 'lax', // allow cross-site cookie in prod
+        path: '/',
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
       })
       .json({

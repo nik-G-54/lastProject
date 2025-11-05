@@ -18,6 +18,7 @@ dotenv.config()
 import { createServer } from 'node:http';
 
 import { Server } from 'socket.io';
+import ChatMessage from "./models/chatMessage.model.js"
 
 
 
@@ -46,8 +47,41 @@ io.on('connection', (socket) => {
         socket.to(ROOM).emit('roomNotice', userName);
     });
 
-    socket.on('chatMessage', (msg) => {
-        socket.to(ROOM).emit('chatMessage', msg);
+    socket.on('requestHistory', async () => {
+        try {
+            const lastMessages = await ChatMessage.find({})
+              .sort({ createdAt: -1 })
+              .limit(100)
+              .lean();
+
+            // send in chronological order
+            socket.emit('history', lastMessages.reverse());
+        } catch (e) {
+            console.error('Failed to fetch chat history', e);
+        }
+    });
+
+    socket.on('chatMessage', async (msg) => {
+        try {
+            const doc = await ChatMessage.create({
+                sender: msg.sender,
+                text: msg.text || '',
+                imageUrl: msg.imageUrl || ''
+            });
+            const saved = {
+                id: doc._id.toString(),
+                sender: doc.sender,
+                text: doc.text,
+                imageUrl: doc.imageUrl,
+                ts: doc.createdAt.getTime(),
+            };
+            // echo to others in room
+            socket.to(ROOM).emit('chatMessage', saved);
+            // optionally confirm back to sender with normalized payload
+            socket.emit('chatAck', saved);
+        } catch (e) {
+            console.error('Failed to save chat message', e);
+        }
     });
 
     socket.on('typing', (userName) => {
@@ -69,23 +103,24 @@ mongoose.connect(process.env.MONGO_URI)
   })
 
 // Enable CORS for frontend(s)
-// const allowedOrigins = [
-//   process.env.FRONTEND_ORIGIN,
-//   "http://localhost:5173",
-//   "https://travelstoryf.onrender.com"
-// ].filter(Boolean)
+const allowedOrigins = [
+  process.env.FRONTEND_ORIGIN,
+  "http://localhost:5173",
+  "http://localhost:4173",
+  "https://travelstoryf.onrender.com"
+].filter(Boolean)
 
-// app.use(cors({
-//   origin: function (origin, callback) {
-//     // allow requests with no origin (like mobile apps, curl, Postman)
-//     if (!origin || allowedOrigins.includes(origin)) {
-//       return callback(null, true)
-//     }
-//     return callback(new Error("Not allowed by CORS"))
-//   },
-//   methods: ["GET", "POST", "PUT", "DELETE"], // Allow CRUD operations
-//   credentials: true, // Allow cookies & authorization headers
-// }))
+app.use(cors({
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps, curl, Postman)
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true)
+    }
+    return callback(new Error("Not allowed by CORS"))
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+}))
 
 app.use(cookieParser())
 
@@ -133,7 +168,7 @@ app.use((err, req, res, next) => {
     message,
     ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   })
-})
+}) 
 
 // Start server
 // const PORT = process.env.PORT || 3000
