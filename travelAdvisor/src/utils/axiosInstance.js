@@ -1,26 +1,11 @@
-// import axios from "axios"
-
-// const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:4600/api" // default to backend port
-
-// const axiosInstance = axios.create({
-//   baseURL: BASE_URL,
-//   withCredentials: true,
-//   headers: {
-//     "Content-Type": "application/json",
-//   },
-// })
-
-// export default axiosInstance
-
-
-
 import axios from "axios";
 
-const BASE_URL ="https://lastproject-a4rs.onrender.com/api"
-  // import.meta.env.VITE_API_BASE_URL ||
-  // (import.meta.env.MODE === "development"
-  //   ? "http://localhost:4600/api"
-  //   : "https://lastproject-a4rs.onrender.com/api");
+// const BASE_URL =
+//   import.meta.env.VITE_API_BASE_URL ||
+//   (import.meta.env.MODE === "development"
+//     ? "http://localhost:8000/api"
+//     : "https://lastproject-a4rs.onrender.com/api");
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -30,8 +15,18 @@ const axiosInstance = axios.create({
   },
 });
 
-// Optional debug (shows which URL is active)
+// 🔐 Attach token to every request
+axiosInstance.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 console.log("🛰️ Axios Base URL:", BASE_URL);
 
 export default axiosInstance;
-
