@@ -13,6 +13,9 @@ Q1-when 400 and when 404
 Ans-  400- when wrong data or missing data 
 404- when route wrong 
 
+Q2- why we use jwt.sign()
+ans->=  jwt.sign() creates a secure authentication token by embedding the user’s ID inside a signed payload using a secret key, allowing the server to verify the user on future requests without re-authentication.
+
 
 
 

@@ -27,7 +27,7 @@ export const signup = async (req, res, next) => {
   }
 
   // check if the user already exists
-  const existingUser = await User.findOne({ email })
+  const existingUser = await User.findOne({ email }) // here User. is from mogoos db who check email exist or not 
 
   if (existingUser) {
     return next(errorHandler(409, "User already exist with this email!"))
@@ -73,32 +73,32 @@ export const signin = async (req, res, next) => {
   console.log("Email:", email)
 
   if (!email || !password || email.trim() === "" || password.trim() === "") {
-    return next(errorHandler(400, "All fields are required"))
+    return next(errorHandler(400, "All fields are required"))  // 
   }
 
   try {
-    const validUser = await User.findOne({ email })
+    const validUser = await User.findOne({ email }) // this User.findOne({email:email}) check is email already register or not its a inbuild function if email exist then its data  will store in the valid user 
 
     if (!validUser) {
       return next(errorHandler(404, "User not found"))
     }
 
-    const validPassword = bcryptjs.compareSync(password, validUser.password)
+    const validPassword = bcryptjs.compareSync(password, validUser.password) // this will return true or false 
 
     if (!validPassword) {
       return next(errorHandler(400, "Wrong Credentials"))
     }
      
-    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET)
+    const token = jwt.sign({ id: validUser._id }, process.env.JWT_SECRET) // this is actually [jwt.sign(payload, secretKey, options?)] .. paylod = This data goes inside the token
 
-    const { password: pass, ...rest } = validUser._doc
+    const { password: pass, ...rest } = validUser._doc // remove password before sending whole info to user {validUser._doc = actual MongoDB document}
 
     const isProd = process.env.NODE_ENV === 'production'
 
     res
       .status(200)
       .cookie("access_token", token, {
-        httpOnly: true,
+        httpOnly: true, // it means JavaScript CANNOT read this cookie  so no one could see the token only server could see 
         secure: isProd, // required by browsers for SameSite=None
         sameSite: isProd ? 'none' : 'lax', // allow cross-site cookie in prod
         path: '/',

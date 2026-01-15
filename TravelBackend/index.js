@@ -13,7 +13,12 @@ import { fileURLToPath } from "url"
 
 const app = express()// this is used to connect express in backend
 
-dotenv.config()  // by this we connect .envfile {dotenv.config()}
+dotenv.config({
+  path: process.env.NODE_ENV === "production"
+    ? ".env.production"
+    : ".env.development",
+});
+  // by this we connect .envfile {dotenv.config()}
 // from here we add group chat ......................................
 import { createServer } from 'node:http';
 
@@ -186,7 +191,7 @@ app.use((err, req, res, next) => {
     success: false,
     statusCode,
     message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
+    //...(process.env.NODE_ENV === 'development' && { stack: err.stack })
   })
 }) 
 
