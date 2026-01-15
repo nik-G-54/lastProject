@@ -11,9 +11,9 @@ import travelStoryRoutes from "./routes/travelStory.route.js"
 import { fileURLToPath } from "url"
 
 
-const app = express()
+const app = express()// this is used to connect express in backend
 
-dotenv.config()
+dotenv.config()  // by this we connect .envfile {dotenv.config()}
 // from here we add group chat ......................................
 import { createServer } from 'node:http';
 
@@ -22,7 +22,7 @@ import ChatMessage from "./models/chatMessage.model.js"
 
 
 
-const server = createServer(app);
+const server = createServer(app);// it will create a HTTP server request
 
 const io = new Server(server, {
     cors: {
@@ -94,7 +94,7 @@ io.on('connection', (socket) => {
 });
 
 
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI) // by this line we ad mongo with the backend mongo.connect("here we paste the Url of mongo db")
   .then(() => {
     console.log("Database is connected")
   })

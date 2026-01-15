@@ -5,7 +5,7 @@ url=http://localhost:3000
 3--url/auth/signout
 4--url/api/travel-story/getall
 
-
+// npm i dotenv mongooes 
 
 
 
