@@ -23,8 +23,22 @@ find() → returns everything (unsafe for private data)
 find({ userId }) → returns only logged-in user’s data (secure)
 
 
+Q4- what is ESM model 
+
+Interview-Ready Explanation
+
+ESM (ECMAScript Modules) is JavaScript’s official module system where imports are statically analyzed and executed before runtime code. This improves performance and predictability but requires environment variables to be loaded before module imports.
 
 
+simple-- it run all the important file before dotenv
+
+
+
+
+Q5-🔹 How to Know You Are Using ESM
+A- we are using in pakage.json {
+  "type": "module"
+}
 
 
 
