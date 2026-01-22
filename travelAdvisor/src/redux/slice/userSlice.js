@@ -3,11 +3,11 @@ import { createSlice } from "@reduxjs/toolkit"
 const initialState = {
   currentUser: null,
   error: null,
-  loading: null,
+  loading: false,
 }
 
 const userSlice = createSlice({
-  name: "user",
+  name: "user",  // Name of the slice eg-=state.user
   initialState,
   reducers: {
     signInStart: (state) => {
@@ -16,14 +16,14 @@ const userSlice = createSlice({
     },
 
     signInSuccess: (state, action) => {
-      state.currentUser = action.payload
+      state.currentUser = action.payload  //Called when login API succeeds  ';What action.payload contains==  User data; Token ;Profile info
       state.loading = false
       state.error = null
     },
 
     signInFailure: (state, action) => {
       state.loading = false
-      state.error = action.payload
+      state.error = action.payload // this contains the error message from backend
     },
 
     signOutSuccess: (state) => {
@@ -35,6 +35,6 @@ const userSlice = createSlice({
 })
 
 export const { signInStart, signInSuccess, signInFailure, signOutSuccess } =
-  userSlice.actions
-
+  userSlice.actions ///Why we export actions
+                    // Used with dispatch()
 export default userSlice.reducer

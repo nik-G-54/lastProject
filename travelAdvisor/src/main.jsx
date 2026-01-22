@@ -8,9 +8,20 @@ import { PersistGate } from "redux-persist/integration/react"
 import "react-day-picker/style.css"
 
 createRoot(document.getElementById("root")).render(
-  <PersistGate persistor={persistor}>
+  // <PersistGate persistor={persistor}>   Delays rendering until persisted state is restored
+  //   <Provider store={store}>       Makes Redux store available to entire app 
+  //     <App  />   
+  //   </Provider>
+  // </PersistGate>
+
+  //   this is the right way to use PersistGate and Provider together
+
+    <StrictMode>
     <Provider store={store}>
-      <App  />
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
     </Provider>
-  </PersistGate>
+  </StrictMode>
+ 
 )
