@@ -1,11 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import React3Fiber from '../react3fiber/react3fiber'
 
 const Landing = () => {
   return (
     <div className="relative h-screen w-full overflow-hidden">
       {/* Video Background */}
-      <video
+      {/* <video
         autoPlay
         loop
         muted
@@ -15,10 +16,10 @@ const Landing = () => {
       >
         <source src="/O.mp4" type="video/mp4" />
         Your browser does not support the video tag.
-      </video>
+      </video> */}
 
       {/* Overlay for better text readability */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black/30 z-10 pointer-events-none"></div>
+      {/* <div className="absolute top-0 left-0 w-full h-full bg-black/30 z-10 pointer-events-none"></div> */}
 
       {/* Transparent Navbar */}
       <nav className="absolute top-0 left-0 w-full flex items-center justify-between px-8 py-6 z-30 pointer-events-auto">
@@ -42,20 +43,22 @@ const Landing = () => {
       </nav>
 
       {/* Hero Content Overlay */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-4">
-        <div className="text-center max-w-4xl mx-auto">
+    <React3Fiber/>
+
+      {/* <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-4">
+        <div className="text-center max-w-4xl mx-auto"> */}
           {/* Website Name */}
-          <h1 className="font-bold text-6xl sm:text-7xl md:text-8xl mb-6 flex flex-wrap justify-center gap-2">
+          {/* <h1 className="font-bold text-6xl sm:text-7xl md:text-8xl mb-6 flex flex-wrap justify-center gap-2">
             <span className="text-blue-400 drop-shadow-2xl">Travel</span>
             <span className="text-blue-800 drop-shadow-2xl">Diary</span>
-          </h1>
+          </h1> */}
 
           {/* Travel Quote */}
-          <p className="text-white text-xl sm:text-2xl md:text-3xl font-light italic drop-shadow-lg mt-4">
+          {/* <p className="text-white text-xl sm:text-2xl md:text-3xl font-light italic drop-shadow-lg mt-4">
             "The world is a book and those who do not travel read only one page"
-          </p>
-        </div>
-      </div>
+          </p> */}
+        {/* </div>
+      </div> */}
     </div>
   )
 }
